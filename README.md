@@ -15,11 +15,9 @@ python -m spacy download en_core_web_sm
 python -c "import nltk; import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger')"
 ```
 
-> **GPU note:** Training LLaVA-7B (even with LoRA + 4-bit) typically needs a 24GB GPU. Reduce batch sizes if needed.
-
 ## 1) Data
 
-Download **MS COCO 2017** images and captions:
+Download MS COCO 2017 images and captions:
 - Train images: `train2017/`
 - Val images: `val2017/`
 - Captions JSON: `annotations/captions_train2017.json`, `annotations/captions_val2017.json`
@@ -34,8 +32,8 @@ export COCO_ROOT=/path/to/coco2017
 
 ## 2) Augmentation (GroundingDINO + CLIP)
 
-We extract **noun phrases** from the human caption, pass them to GroundingDINO to get **grounded boxes**, crop regions,
-and build **region-level captions**. We then **filter** region captions using **CLIP image–text similarity**.
+We extract noun phrases from the human caption, pass them to GroundingDINO to get grounded boxes, crop regions,
+and build region-level captions. We then filter region captions using CLIP image–text similarity.
 The output is a JSONL training file mixing full-image captions and region-level examples.
 
 ```bash
@@ -43,8 +41,6 @@ python -m src.augment.augment_gdino_clip   --coco-root $COCO_ROOT   --split trai
 ```
 
 ## 3) Fine-tune LLaVA-7B with LoRA
-
-This uses Hugging Face LLaVA (HF port). You can switch model ids if needed.
 
 ```bash
 python -m src.train.finetune_llava   --train-file /tmp/coco_train_augmented.jsonl   --val-ann $COCO_ROOT/annotations/captions_val2017.json   --val-images $COCO_ROOT/val2017   --output-dir /tmp/llava-lora-coco   --model-id llava-hf/llava-1.5-7b-hf   --epochs 1 --bsz 1 --grad-accum 16   --lr 1e-4 --image-size 336
@@ -60,11 +56,9 @@ After fine-tuning, run evaluation on COCO val2017:
 python -m src.eval.evaluate_coco   --model /tmp/llava-lora-coco   --images $COCO_ROOT/val2017   --ann $COCO_ROOT/annotations/captions_val2017.json   --num-examples 5000   --batch-size 2   --model-id llava-hf/llava-1.5-7b-hf
 ```
 
-This prints **BLEU-4** and **CIDEr**.
+This prints BLEU-4 and CIDEr.
 
 ## Notes
 
-- GroundingDINO usage here relies on the **Transformers** implementation (`IDEA-Research/grounding-dino-tiny`).
-- You may switch CLIP to `open_clip.create_model_and_transforms()` if preferred.
-- The LLaVA chat prompt format masks **USER** turns and trains on **ASSISTANT** tokens only.
-- For larger-scale training, consider DDP with `accelerate`.
+- GroundingDINO usage here relies on the Transformers implementation (`IDEA-Research/grounding-dino-tiny`).
+- The LLaVA chat prompt format masks USER turns and trains on ASSISTANT tokens only.
