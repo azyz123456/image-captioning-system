@@ -1,9 +1,6 @@
 # Image Captioning System (GroundingDINO + CLIP Augment, LLaVA-7B Fine-tune)
 
-This project builds an end-to-end image captioning pipeline on MS COCO with:
-- **Automated data augmentation** using **GroundingDINO** (phrase grounding) + **CLIP** (filtering).
-- **Fine-tuning** **LLaVA-7B** with LoRA (4-bit) for captioning.
-- **Evaluation** using **BLEU-4** and **CIDEr**.
+This project builds an end-to-end image captioning pipeline on MS COCO.
 
 ## 0) Environment
 
