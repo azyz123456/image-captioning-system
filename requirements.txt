@@ -1,0 +1,26 @@
+# Core
+torch>=2.1
+torchvision
+transformers>=4.42.0
+datasets>=2.18.0
+pillow
+numpy
+tqdm
+accelerate>=0.30.0
+bitsandbytes>=0.43.0
+peft>=0.10.0
+sentencepiece
+tokenizers
+opencv-python
+# Text analysis
+spacy
+nltk
+# Vision-language models
+open-clip-torch
+# COCO utils
+pycocotools
+# CIDEr metric (install via git)
+git+https://github.com/salaniz/pycocoevalcap
+# GroundingDINO (via transformers model + processor recommended)
+# Alternatively, install the original repo if preferred:
+# git+https://github.com/IDEA-Research/GroundingDINO.git
